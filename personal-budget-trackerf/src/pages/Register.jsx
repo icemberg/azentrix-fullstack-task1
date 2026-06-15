@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 const Register = ({ setAuthToken }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,11 +18,11 @@ const Register = ({ setAuthToken }) => {
       setError("Passwords do not match!");
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/v1/auth/register', {
+      const response = await fetch(`${API_URL}/v1/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -52,37 +55,37 @@ const Register = ({ setAuthToken }) => {
           <h1>Create Account</h1>
           <p>Join BudgetTracker and manage your finances.</p>
         </div>
-        
+
         {error && <div className="auth-error">{error}</div>}
-        
+
         <form onSubmit={handleRegister} className="auth-form">
           <div className="form-group">
             <label>Username</label>
-            <input 
-              type="text" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              required 
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
               placeholder="Choose a username"
             />
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               placeholder="Create a strong password"
             />
           </div>
           <div className="form-group">
             <label>Confirm Password</label>
-            <input 
-              type="password" 
-              value={confirmPassword} 
-              onChange={(e) => setConfirmPassword(e.target.value)} 
-              required 
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
               placeholder="Repeat your password"
             />
           </div>
@@ -90,7 +93,7 @@ const Register = ({ setAuthToken }) => {
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
-        
+
         <div className="auth-footer">
           Already have an account? <Link to="/login">Login here</Link>
         </div>

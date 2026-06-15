@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import PropTypes from 'prop-types';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const PALETTE = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16', '#e11d48', '#a855f7']
 
@@ -243,7 +244,7 @@ export default function Dashboard({ entries, authToken }) {
     let cancelled = false
     setLoading(true)
 
-    fetch(`/v1/income/summary?year=${year}`, {
+    fetch(`${API_URL}/v1/income/summary?year=${year}`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
     })
       .then((r) => {

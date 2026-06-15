@@ -33,6 +33,21 @@ Small businesses and individuals often struggle to track their daily income and 
 - ⚡ Lightning-fast React + Vite frontend UI
 - ☕ Robust Spring Boot backend
 
+### Screenshots
+Here is a look at the Personal Budget Tracker in action:
+
+**Login Screen**
+![Login Screen](docs/images/login.png)
+
+**Empty Dashboard**
+![Empty Dashboard](docs/images/dashboard-empty.png)
+
+**Dashboard with Entries**
+![Dashboard with Entries](docs/images/dashboard-entries.png)
+
+**Monthly Charts & Analytics**
+![Dashboard Charts](docs/images/dashboard-charts.png)
+
 ## Architecture Overview
 The system follows a standard modern full-stack web architecture. The React frontend is deployed independently to Vercel and communicates via RESTful APIs to the Spring Boot backend. The backend manages stateless authentication using JSON Web Tokens (JWT) and stores all user and financial records securely. In development, it uses an in-memory H2 relational database, while in production it runs inside a Docker container utilizing a MySQL database. 
 

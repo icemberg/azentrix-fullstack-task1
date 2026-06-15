@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import "../App.css";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 const Login = ({ setAuthToken }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +16,7 @@ const Login = ({ setAuthToken }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/v1/auth/login', {
+      const response = await fetch(`${API_URL}/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

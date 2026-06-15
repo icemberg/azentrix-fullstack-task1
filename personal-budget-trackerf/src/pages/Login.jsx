@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './App.css'; // Will add styles here
+import "../App.css";
 
 const Login = ({ setAuthToken }) => {
   const [username, setUsername] = useState('');
@@ -44,27 +44,27 @@ const Login = ({ setAuthToken }) => {
           <h1>BudgetTracker</h1>
           <p>Welcome back! Please login to your account.</p>
         </div>
-        
+
         {error && <div className="auth-error">{error}</div>}
-        
+
         <form onSubmit={handleLogin} className="auth-form">
           <div className="form-group">
             <label>Username</label>
-            <input 
-              type="text" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              required 
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
               placeholder="Enter your username"
             />
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               placeholder="Enter your password"
             />
           </div>
@@ -72,7 +72,7 @@ const Login = ({ setAuthToken }) => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        
+
         <div className="auth-footer">
           Don't have an account? <Link to="/register">Register here</Link>
         </div>

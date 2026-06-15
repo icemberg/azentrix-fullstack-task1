@@ -39,7 +39,7 @@ function Home({ authToken, setAuthToken }) {
 
   const loadEntries = async () => {
     try {
-      const response = await fetch('http://localhost:8080/v1/income', {
+      const response = await fetch('/v1/income', {
         headers: { 'Authorization': `Bearer ${authToken}` }
       })
       if (!response.ok) {
@@ -106,8 +106,8 @@ function Home({ authToken, setAuthToken }) {
     try {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId
-        ? `http://localhost:8080/v1/income/${editingId}`
-        : 'http://localhost:8080/v1/income'
+        ? `/v1/income/${editingId}`
+        : '/v1/income'
 
       const response = await fetch(url, {
         method,
@@ -161,7 +161,7 @@ function Home({ authToken, setAuthToken }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/v1/income/${id}`, {
+      const response = await fetch(`/v1/income/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${authToken}` }
       })

@@ -19,7 +19,7 @@ const Register = ({ setAuthToken }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/v1/auth/register', {
+      const response = await fetch('/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

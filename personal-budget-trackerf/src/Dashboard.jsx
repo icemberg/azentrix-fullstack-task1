@@ -243,7 +243,7 @@ export default function Dashboard({ entries, authToken }) {
     let cancelled = false
     setLoading(true)
 
-    fetch(`http://localhost:8080/v1/income/summary?year=${year}`, {
+    fetch(`/v1/income/summary?year=${year}`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
     })
       .then((r) => {

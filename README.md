@@ -235,4 +235,4 @@ mvn test
 ```
 
 ## License
-MIT © 2025 TaskFlow Inc.
+MIT © 2026.

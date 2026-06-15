@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import PropTypes from 'prop-types';
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const PALETTE = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16', '#e11d48', '#a855f7']
@@ -107,6 +108,14 @@ function BarChart({ months }) {
   )
 }
 
+BarChart.propTypes = {
+  months: PropTypes.arrayOf(PropTypes.shape({
+    month: PropTypes.string.isRequired,
+    income: PropTypes.number.isRequired,
+    expenses: PropTypes.number.isRequired,
+  })).isRequired,
+};
+
 function PieChart({ data, title }) {
   const entries = Object.entries(data || {})
   const total = entries.reduce((s, [, v]) => s + v, 0)
@@ -180,15 +189,20 @@ function PieChart({ data, title }) {
   )
 }
 
-export default function Dashboard({ entries }) {
+PieChart.propTypes = {
+  data: PropTypes.object,
+  title: PropTypes.string.isRequired,
+};
+
+export default function Dashboard({ entries, authToken }) {
   const currentYear = new Date().getFullYear()
   const [year, setYear] = useState(currentYear)
   const [summaryData, setSummaryData] = useState(null)
   const [loading, setLoading] = useState(true)
 
   const localSummary = useMemo(() => {
-    const monthlyIncome = Array(12).fill(0)
-    const monthlyExpense = Array(12).fill(0)
+    const monthlyIncome = new Array(12).fill(0)
+    const monthlyExpense = new Array(12).fill(0)
     const incByCat = {}
     const expByCat = {}
 
@@ -229,7 +243,9 @@ export default function Dashboard({ entries }) {
     let cancelled = false
     setLoading(true)
 
-    fetch(`http://localhost:8080/v1/income/summary?year=${year}`)
+    fetch(`http://localhost:8080/v1/income/summary?year=${year}`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    })
       .then((r) => {
         if (!r.ok) throw new Error('fail')
         return r.json()
@@ -250,7 +266,7 @@ export default function Dashboard({ entries }) {
     return () => {
       cancelled = true
     }
-  }, [year])
+  }, [year, authToken])
 
   const summary = summaryData || localSummary
   const months = summary.months || []
@@ -338,3 +354,8 @@ export default function Dashboard({ entries }) {
     </section>
   )
 }
+
+Dashboard.propTypes = {
+  entries: PropTypes.array.isRequired,
+  authToken: PropTypes.string,
+};

@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Dashboard from './Dashboard'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import './App.css'
 
 const today = new Date().toISOString().slice(0, 10)
@@ -12,8 +15,14 @@ const baseForm = {
   date: today,
 }
 
-function App() {
+function ProtectedRoute({ children, authToken }) {
+  if (!authToken) {
+    return <Navigate to="/login" replace />
+  }
+  return children
+}
 
+function Home({ authToken, setAuthToken }) {
   const [entries, setEntries] = useState(() => {
     const savedEntries = localStorage.getItem('budget-entries')
     return savedEntries ? JSON.parse(savedEntries) : []
@@ -30,9 +39,14 @@ function App() {
 
   const loadEntries = async () => {
     try {
-      const response = await fetch('http://localhost:8080/v1/income')
+      const response = await fetch('http://localhost:8080/v1/income', {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      })
       if (!response.ok) {
-        throw new Error('Backend unavailable')
+        if (response.status === 401) {
+          handleLogout();
+        }
+        throw new Error('Backend unavailable or unauthorized')
       }
       const payload = await response.json()
       const data = Array.isArray(payload.data) ? payload.data : []
@@ -43,13 +57,13 @@ function App() {
       if (savedEntries) {
         setEntries(JSON.parse(savedEntries))
       }
-      setStatus('Using local storage (Backend offline)')
+      setStatus('Using local storage (Backend offline or error)')
     }
   }
 
   useEffect(() => {
     loadEntries()
-  }, [])
+  }, [authToken])
 
   const summary = useMemo(() => {
     const income = entries
@@ -97,11 +111,15 @@ function App() {
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
         body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
+        if (response.status === 401) handleLogout();
         throw new Error('Request failed')
       }
 
@@ -145,8 +163,10 @@ function App() {
     try {
       const response = await fetch(`http://localhost:8080/v1/income/${id}`, {
         method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${authToken}` }
       })
       if (!response.ok) {
+        if (response.status === 401) handleLogout();
         throw new Error('Delete failed')
       }
       setEntries((current) => current.filter((entry) => entry.id !== id))
@@ -157,8 +177,16 @@ function App() {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setAuthToken(null);
+  };
+
   return (
     <div className="app-shell">
+      <div className="top-bar">
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+      </div>
       <header className="hero-card">
         <div>
           <p className="eyebrow">Personal Budget Tracker</p>
@@ -291,10 +319,29 @@ function App() {
           </section>
         </main>
       ) : (
-        <Dashboard entries={entries} />
+        <Dashboard entries={entries} authToken={authToken} />
       )}
     </div>
   )
+}
+
+function App() {
+  const [authToken, setAuthToken] = useState(localStorage.getItem('token'));
+
+  return (
+    <Routes>
+      <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
+      <Route path="/register" element={<Register setAuthToken={setAuthToken} />} />
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute authToken={authToken}>
+            <Home authToken={authToken} setAuthToken={setAuthToken} />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
+  );
 }
 
 export default App

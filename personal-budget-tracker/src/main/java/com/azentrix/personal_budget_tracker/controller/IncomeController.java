@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azentrix.personal_budget_tracker.dto.ApiResponse;
+import com.azentrix.personal_budget_tracker.dto.IncomeDto;
 import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
 import com.azentrix.personal_budget_tracker.entity.User;
@@ -38,7 +39,7 @@ public class IncomeController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Income>>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ApiResponse<List<IncomeDto>>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = resolveUserId(userDetails);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.ENTRY_RETRIEVED, incomeService.getAllIncome(userId)));
     }
@@ -53,7 +54,7 @@ public class IncomeController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Income>> add(
+    public ResponseEntity<ApiResponse<IncomeDto>> add(
             @RequestBody Income income,
             @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = resolveUserId(userDetails);
@@ -63,7 +64,7 @@ public class IncomeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Income>> update(
+    public ResponseEntity<ApiResponse<IncomeDto>> update(
             @PathVariable Long id,
             @RequestBody Income income,
             @AuthenticationPrincipal UserDetails userDetails) {

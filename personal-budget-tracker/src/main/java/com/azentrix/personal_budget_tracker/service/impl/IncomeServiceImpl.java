@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.azentrix.personal_budget_tracker.dto.IncomeDto;
 import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
 import com.azentrix.personal_budget_tracker.entity.User;
@@ -32,21 +33,23 @@ public class IncomeServiceImpl implements IncomeService {
     private final UserRepository userRepository;
 
     @Override
-    public Income addIncome(Income income, Long userId) {
+    public IncomeDto addIncome(Income income, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         income.setUser(user);
         log.info("Adding entry for user {}: {}", userId, income);
-        return incomeRepository.save(income);
+        return mapToDto(incomeRepository.save(income));
     }
 
     @Override
-    public List<Income> getAllIncome(Long userId) {
-        return incomeRepository.findAllByUserId(userId);
+    public List<IncomeDto> getAllIncome(Long userId) {
+        return incomeRepository.findAllByUserId(userId).stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     @Override
-    public Income updateIncome(Long id, Income income, Long userId) {
+    public IncomeDto updateIncome(Long id, Income income, Long userId) {
         Income existing = incomeRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Entry not found"));
         existing.setAmount(income.getAmount());
@@ -54,7 +57,7 @@ public class IncomeServiceImpl implements IncomeService {
         existing.setDate(income.getDate());
         existing.setCategory(income.getCategory());
         existing.setType(income.getType());
-        return incomeRepository.save(existing);
+        return mapToDto(incomeRepository.save(existing));
     }
 
     @Override
@@ -120,6 +123,17 @@ public class IncomeServiceImpl implements IncomeService {
                 .months(months)
                 .incomeByCategory(incomeByCategory)
                 .expenseByCategory(expenseByCategory)
+                .build();
+    }
+
+    private IncomeDto mapToDto(Income income) {
+        return IncomeDto.builder()
+                .id(income.getId())
+                .amount(income.getAmount())
+                .description(income.getDescription())
+                .date(income.getDate())
+                .category(income.getCategory())
+                .type(income.getType())
                 .build();
     }
 }

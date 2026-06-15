@@ -3,7 +3,7 @@ package com.azentrix.personal_budget_tracker.security;
 import java.io.IOException;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.NonNull;
+import jakarta.annotation.Nonnull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,9 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @Nonnull HttpServletRequest request,
+            @Nonnull HttpServletResponse response,
+            @Nonnull FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+    protected boolean shouldNotFilter(@Nonnull HttpServletRequest request) {
         return request.getServletPath().startsWith("/v1/auth");
     }
 }

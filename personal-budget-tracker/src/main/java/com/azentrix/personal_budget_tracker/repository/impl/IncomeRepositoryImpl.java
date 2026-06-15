@@ -11,6 +11,7 @@ import com.azentrix.personal_budget_tracker.entity.Income;
 import com.azentrix.personal_budget_tracker.repository.interfaces.IncomeRepository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 @Repository
 public class IncomeRepositoryImpl extends SimpleJpaRepository<Income, Long> implements IncomeRepository {
@@ -49,5 +50,37 @@ public class IncomeRepositoryImpl extends SimpleJpaRepository<Income, Long> impl
                 .setParameter("start", start)
                 .setParameter("end", end)
                 .getResultList();
+    }
+
+    @Override
+    public List<Income> findAllByUserId(Long userId) {
+        return entityManager
+                .createQuery("SELECT i FROM Income i WHERE i.user.userId = :userId ORDER BY i.date DESC", Income.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Income> findByUserIdAndDateBetween(Long userId, LocalDate start, LocalDate end) {
+        return entityManager
+                .createQuery("SELECT i FROM Income i WHERE i.user.userId = :userId AND i.date BETWEEN :start AND :end ORDER BY i.date", Income.class)
+                .setParameter("userId", userId)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .getResultList();
+    }
+
+    @Override
+    public Optional<Income> findByIdAndUserId(Long id, Long userId) {
+        try {
+            Income income = entityManager
+                    .createQuery("SELECT i FROM Income i WHERE i.id = :id AND i.user.userId = :userId", Income.class)
+                    .setParameter("id", id)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+            return Optional.of(income);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

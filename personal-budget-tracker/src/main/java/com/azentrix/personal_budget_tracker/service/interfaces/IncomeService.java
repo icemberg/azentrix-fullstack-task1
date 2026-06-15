@@ -6,13 +6,13 @@ import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
 
 public interface IncomeService {
-    Income addIncome(Income income);
+    Income addIncome(Income income, Long userId);
 
-    List<Income> getAllIncome();
+    List<Income> getAllIncome(Long userId);
 
-    Income updateIncome(Long id, Income income);
+    Income updateIncome(Long id, Income income, Long userId);
 
-    void deleteIncome(Long id);
+    void deleteIncome(Long id, Long userId);
 
-    MonthlySummary getMonthlySummary(int year);
+    MonthlySummary getMonthlySummary(int year, Long userId);
 }

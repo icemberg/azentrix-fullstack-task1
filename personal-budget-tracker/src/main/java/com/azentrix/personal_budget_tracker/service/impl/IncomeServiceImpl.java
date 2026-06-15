@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
+import com.azentrix.personal_budget_tracker.entity.User;
 import com.azentrix.personal_budget_tracker.repository.interfaces.IncomeRepository;
+import com.azentrix.personal_budget_tracker.repository.interfaces.UserRepository;
 import com.azentrix.personal_budget_tracker.service.interfaces.IncomeService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,21 +29,25 @@ public class IncomeServiceImpl implements IncomeService {
     private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
     private final IncomeRepository incomeRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public Income addIncome(Income income) {
-        log.info("Adding entry: {}", income);
+    public Income addIncome(Income income, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        income.setUser(user);
+        log.info("Adding entry for user {}: {}", userId, income);
         return incomeRepository.save(income);
     }
 
     @Override
-    public List<Income> getAllIncome() {
-        return incomeRepository.findAll();
+    public List<Income> getAllIncome(Long userId) {
+        return incomeRepository.findAllByUserId(userId);
     }
 
     @Override
-    public Income updateIncome(Long id, Income income) {
-        Income existing = incomeRepository.findById(id)
+    public Income updateIncome(Long id, Income income, Long userId) {
+        Income existing = incomeRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Entry not found"));
         existing.setAmount(income.getAmount());
         existing.setDescription(income.getDescription());
@@ -52,15 +58,17 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
-    public void deleteIncome(Long id) {
-        incomeRepository.deleteById(id);
+    public void deleteIncome(Long id, Long userId) {
+        Income existing = incomeRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Entry not found"));
+        incomeRepository.deleteById(existing.getId());
     }
 
     @Override
-    public MonthlySummary getMonthlySummary(int year) {
+    public MonthlySummary getMonthlySummary(int year, Long userId) {
         LocalDate start = LocalDate.of(year, 1, 1);
         LocalDate end = LocalDate.of(year, 12, 31);
-        List<Income> entries = incomeRepository.findByDateBetween(start, end);
+        List<Income> entries = incomeRepository.findByUserIdAndDateBetween(userId, start, end);
 
         Map<String, Double> monthlyIncome = new TreeMap<>();
         Map<String, Double> monthlyExpense = new TreeMap<>();

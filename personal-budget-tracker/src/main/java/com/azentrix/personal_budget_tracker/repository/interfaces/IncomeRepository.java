@@ -16,4 +16,10 @@ public interface IncomeRepository {
     void deleteById(Long id);
 
     List<Income> findByDateBetween(LocalDate start, LocalDate end);
+
+    List<Income> findAllByUserId(Long userId);
+
+    List<Income> findByUserIdAndDateBetween(Long userId, LocalDate start, LocalDate end);
+
+    Optional<Income> findByIdAndUserId(Long id, Long userId);
 }

@@ -17,13 +17,5 @@ done
 echo "MySQL is up and running!"
 
 echo "Starting Spring Boot Application..."
-# The database connection details are overridden via environment variables
-export SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true"
-export SPRING_DATASOURCE_USERNAME="root"
-export SPRING_DATASOURCE_PASSWORD="${MYSQL_ROOT_PASSWORD}"
-# We update the schema instead of create-drop so data persists across app restarts (until container dies)
-export SPRING_JPA_HIBERNATE_DDL_AUTO="update"
-export SPRING_H2_CONSOLE_ENABLED="false"
-
-# Run the backend (which also serves the frontend assets from /static)
+# The database connection details are managed by application-prod.properties
 exec java -jar /app/app.jar

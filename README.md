@@ -202,17 +202,26 @@ flowchart TD
    ```
    *The frontend will be accessible at `http://localhost:5173`.*
 
-## Environment Variables
-The application relies on several properties to run securely. In the backend `application.properties`, ensure the following are configured:
+## Environment Variables & Profiles
+The application uses Spring Profiles to seamlessly switch between local development and production environments.
 
+### Local Profile (`application-local.properties`)
+By default, the application runs with the `local` profile, which provisions a lightweight, in-memory H2 database.
 ```properties
-# Database
-spring.datasource.url=jdbc:h2:mem:budgetdb
-spring.datasource.driver-class-name=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
+spring.datasource.url=jdbc:h2:mem:budgetdb;MODE=MySQL...
+spring.h2.console.enabled=true
+```
 
-# JWT Configuration
+### Production Profile (`application-prod.properties`)
+When deployed via Docker, the container activates the `prod` profile (`SPRING_PROFILES_ACTIVE=prod`), which connects to the bundled MySQL database.
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/${MYSQL_DATABASE}...
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=root
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Ensure the core JWT properties in `application.properties` remain secure:
 jwt.secret=dGhpc0lzQVZlcnlTZWN1cmVTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb24xMjM0NTY3ODk=
 jwt.expiration=86400000
 ```

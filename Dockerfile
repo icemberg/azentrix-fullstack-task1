@@ -48,6 +48,9 @@ RUN apt-get update && \
 ENV MYSQL_ROOT_PASSWORD=root
 ENV MYSQL_DATABASE=budgetdb
 
+# Set Spring profile to production
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Copy the packaged Spring Boot Jar
 WORKDIR /app
 COPY --from=backend-build /app/backend/target/personal-budget-tracker-0.0.1-SNAPSHOT.jar app.jar

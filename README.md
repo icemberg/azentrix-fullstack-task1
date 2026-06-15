@@ -34,7 +34,7 @@ Small businesses and individuals often struggle to track their daily income and 
 - ☕ Robust Spring Boot backend
 
 ## Architecture Overview
-The system follows a standard modern full-stack web architecture. It relies on a React frontend that communicates via RESTful APIs to a Spring Boot backend. The backend manages stateless authentication using JSON Web Tokens (JWT) and stores all user and financial records securely in an embedded H2 relational database (which can easily be swapped for MySQL/PostgreSQL in production). 
+The system follows a standard modern full-stack web architecture. The React frontend is deployed independently to Vercel and communicates via RESTful APIs to the Spring Boot backend. The backend manages stateless authentication using JSON Web Tokens (JWT) and stores all user and financial records securely. In development, it uses an in-memory H2 relational database, while in production it runs inside a Docker container utilizing a MySQL database. 
 
 ### DIAGRAM 1 — System Context Diagram (C4 Level 1)
 This diagram illustrates the high-level system context, showing how the primary actor (the User) interacts with the Personal Budget Tracker system, and how the system is conceptually self-contained, handling all business logic and data persistence internally without third-party external service dependencies.
@@ -213,7 +213,7 @@ spring.h2.console.enabled=true
 ```
 
 ### Production Profile (`application-prod.properties`)
-When deployed via Docker, the container activates the `prod` profile (`SPRING_PROFILES_ACTIVE=prod`), which connects to the bundled MySQL database.
+When the backend is deployed via Docker, the container activates the `prod` profile (`SPRING_PROFILES_ACTIVE=prod`), which connects to the bundled MySQL database. The frontend is hosted separately on Vercel and securely communicates with the backend APIs via configured CORS origins.
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/${MYSQL_DATABASE}...
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver

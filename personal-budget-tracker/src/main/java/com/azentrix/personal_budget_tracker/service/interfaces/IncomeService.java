@@ -2,6 +2,7 @@ package com.azentrix.personal_budget_tracker.service.interfaces;
 
 import java.util.List;
 
+import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
 
 public interface IncomeService {
@@ -12,4 +13,6 @@ public interface IncomeService {
     Income updateIncome(Long id, Income income);
 
     void deleteIncome(Long id);
+
+    MonthlySummary getMonthlySummary(int year);
 }

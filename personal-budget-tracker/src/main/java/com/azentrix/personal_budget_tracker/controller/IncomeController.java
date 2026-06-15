@@ -1,5 +1,6 @@
 package com.azentrix.personal_budget_tracker.controller;
 
+import java.time.Year;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azentrix.personal_budget_tracker.dto.IncomeResponse;
+import com.azentrix.personal_budget_tracker.dto.MonthlySummary;
 import com.azentrix.personal_budget_tracker.entity.Income;
 import com.azentrix.personal_budget_tracker.enums.ResponseMessage;
 import com.azentrix.personal_budget_tracker.enums.ResponseStatus;
@@ -35,6 +38,13 @@ public class IncomeController {
     @GetMapping
     public ResponseEntity<IncomeResponse<List<Income>>> getAll() {
         return ResponseEntity.ok(IncomeResponse.success(ResponseStatus.SUCCESS, ResponseMessage.ENTRY_RETRIEVED, incomeService.getAllIncome()));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<IncomeResponse<MonthlySummary>> getMonthlySummary(
+            @RequestParam(required = false) Integer year) {
+        int resolvedYear = (year != null) ? year : Year.now().getValue();
+        return ResponseEntity.ok(IncomeResponse.success(ResponseStatus.SUCCESS, ResponseMessage.SUCCESS, incomeService.getMonthlySummary(resolvedYear)));
     }
 
     @PostMapping

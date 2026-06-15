@@ -1,5 +1,6 @@
 package com.azentrix.personal_budget_tracker.repository.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +15,11 @@ import jakarta.persistence.EntityManager;
 @Repository
 public class IncomeRepositoryImpl extends SimpleJpaRepository<Income, Long> implements IncomeRepository {
 
+    private final EntityManager entityManager;
+
     public IncomeRepositoryImpl(EntityManager entityManager) {
         super(Income.class, entityManager);
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -36,5 +40,14 @@ public class IncomeRepositoryImpl extends SimpleJpaRepository<Income, Long> impl
     @Override
     public void deleteById(Long id) {
         super.deleteById(id);
+    }
+
+    @Override
+    public List<Income> findByDateBetween(LocalDate start, LocalDate end) {
+        return entityManager
+                .createQuery("SELECT i FROM Income i WHERE i.date BETWEEN :start AND :end ORDER BY i.date", Income.class)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .getResultList();
     }
 }

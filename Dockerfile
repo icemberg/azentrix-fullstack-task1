@@ -40,7 +40,9 @@ RUN mvn clean package -DskipTests
 FROM mysql:8.0.35-debian
 
 # Install OpenJDK 17 Runtime
-RUN apt-get update && \
+# Note: We remove the mysql.list first because the GPG key in older mysql images has expired, breaking apt-get update.
+RUN rm -f /etc/apt/sources.list.d/mysql.list && \
+    apt-get update && \
     apt-get install -y openjdk-17-jre-headless && \
     rm -rf /var/lib/apt/lists/*
 

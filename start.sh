@@ -8,9 +8,9 @@ echo "Starting MySQL daemon in the background..."
 # We override the entrypoint temporarily to run it in background
 docker-entrypoint.sh mysqld &
 
-# Wait for MySQL to be fully ready
+# Wait for MySQL to be fully ready (final TCP server, not the temporary socket server)
 echo "Waiting for MySQL to start..."
-until mysqladmin ping -h"localhost" -uroot -p"${MYSQL_ROOT_PASSWORD}" --silent; do
+until mysqladmin ping -h"127.0.0.1" -P3306 -uroot -p"${MYSQL_ROOT_PASSWORD}" --silent; do
     sleep 2
 done
 
